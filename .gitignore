@@ -1,0 +1,7 @@
+/dist/
+/target/
+/Cargo.lock
+.idea/
+.DS_Store
+.env
+metrics.db
