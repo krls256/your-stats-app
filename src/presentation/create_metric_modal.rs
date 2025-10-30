@@ -1,13 +1,14 @@
 use dioxus::prelude::*;
 use crate::domain::MetricType;
-use crate::application as app;
 use crate::localization::{get_localization, Language};
+use crate::application::Service;
 
 #[component]
 pub fn CreateMetricModal(
     mut show: Signal<bool>,
     mut on_success: Signal<()>,
     language: Language,
+    srv: Signal<&'static Service>,
 ) -> Element {
     let localization = get_localization(language);
     
@@ -21,7 +22,7 @@ pub fn CreateMetricModal(
         let desc = metric_description();
         let desc = if desc.is_empty() { None } else { Some(desc.as_str()) };
         
-        if app::create_metric(&metric_name(), mtype, desc).is_ok() {
+        if srv.read().create_metric(&metric_name(), mtype, desc).is_ok() {
             metric_name.set(String::new());
             metric_description.set(String::new());
             

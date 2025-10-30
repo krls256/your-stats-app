@@ -1,12 +1,13 @@
 use dioxus::prelude::*;
 use crate::domain::{correlation::{Correlation, CorrelationType}, MetricType};
-use crate::application as app;
+use crate::application::Service;
 use crate::localization::{Language, get_localization};
 
 #[component]
 pub fn CorrelationsTab(
     correlations: Signal<Vec<Correlation>>,
     language: Language,
+    srv: Signal<&'static Service>,
 ) -> Element {
     let localization = get_localization(language);
 
@@ -26,7 +27,7 @@ pub fn CorrelationsTab(
                 button { 
                     class: "px-4 py-2 rounded-lg bg-blue-900 text-white font-semibold hover:bg-blue-800 transition-colors", 
                     onclick: move |_| {
-                        if let Ok(corrs) = app::calculate_correlations() { correlations.set(corrs); }
+                        if let Ok(corrs) = srv.read().calculate_correlations() { correlations.set(corrs); }
                     }, 
                     "{localization.calculate_correlations()}" 
                 }

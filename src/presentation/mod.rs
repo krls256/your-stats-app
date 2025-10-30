@@ -4,4 +4,5 @@ pub mod correlations_tab;
 pub mod navigation;
 pub mod create_metric_modal;
 pub mod pagination;
+pub mod language_buttons;
 

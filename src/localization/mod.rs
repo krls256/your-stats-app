@@ -1,3 +1,6 @@
+use strum_macros::{EnumIter, FromRepr};
+use strum::{IntoEnumIterator};
+
 pub mod ua;
 pub mod en;
 
@@ -49,11 +52,24 @@ pub trait LocalizationTrait: Send + Sync {
     fn based_on_points_formatted(&self, count: usize) -> String;
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, EnumIter, FromRepr)]
 pub enum Language {
     Ua,
     En,
 }
+
+impl Language {
+    pub fn all() -> impl Iterator<Item=Self> {
+        Language::iter().rev()
+    }
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Language::Ua => "UA",
+            Language::En => "EN"
+        }
+    }
+}
+
 
 pub fn get_localization(lang: Language) -> &'static dyn LocalizationTrait {
     match lang {

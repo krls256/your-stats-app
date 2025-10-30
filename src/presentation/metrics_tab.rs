@@ -1,12 +1,13 @@
 use dioxus::prelude::*;
 use crate::domain::metric::Metric;
-use crate::application as app;
+use crate::application::Service;
 use crate::localization::{get_localization, Language};
 
 #[component]
 pub fn MetricsTab(
     mut metrics: Signal<Vec<Metric>>,
     language: Language,
+    srv: Signal<&'static Service>,
 ) -> Element {
     let localization = get_localization(language);
 
@@ -16,14 +17,14 @@ pub fn MetricsTab(
 
     use_effect(move || {
         refresh_trigger();
-        if let Ok(m) = app::list_metrics() { metrics.set(m); }
+        if let Ok(m) = srv.read().list_metrics() { metrics.set(m); }
     });
 
     let mut delete_metric_action = move |metric_id: i64| {
-        if app::delete_metric(metric_id).is_ok() {
+        if srv.read().delete_metric(metric_id).is_ok() {
             metric_to_delete.set(None);
 
-            if let Ok(m) = app::list_metrics() { metrics.set(m); }
+            if let Ok(m) = srv.read().list_metrics() { metrics.set(m); }
         }
     };
 
@@ -42,7 +43,8 @@ pub fn MetricsTab(
                 crate::presentation::create_metric_modal::CreateMetricModal {
                     show: show_form,
                     on_success: refresh_trigger,
-                    language: language
+                    language: language,
+                    srv: srv,
                 }
             }
 

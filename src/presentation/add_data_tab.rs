@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 use crate::domain::{metric::Metric, data_point::DataPoint, offset};
-use crate::application as app;
+use crate::application::Service;
 use crate::localization::{Language, get_localization};
 
 #[component]
@@ -9,6 +9,7 @@ pub fn AddDataTab(
     mut selected_metric: Signal<Option<i64>>,
     mut error_message: Signal<Option<String>>,
     language: Language,
+    srv: Signal<&'static Service>,
 ) -> Element {
     let localization = get_localization(language);
     let mut data_value = use_signal(String::new);
@@ -31,11 +32,11 @@ pub fn AddDataTab(
         }
 
         if let Some(metric_id) = metric_id {
-            if let Ok(count) = app::get_data_points_count(metric_id) {
+            if let Ok(count) = srv.read().get_data_points_count(metric_id) {
                 total_count.set(count);
             }
 
-            if let Ok(points) = app::get_data_points_paginated(metric_id, PAGE_SIZE, offset(page, PAGE_SIZE)) {
+            if let Ok(points) = srv.read().get_data_points_paginated(metric_id, PAGE_SIZE, offset(page, PAGE_SIZE)) {
                 recent_points.set(points);
             }
         } else {
@@ -45,8 +46,9 @@ pub fn AddDataTab(
     }));
 
     let mut add_data_action = move || {
+
         if let Some(metric_id) = selected_metric() {
-            match app::add_data_point(metric_id, &data_value()) {
+            match srv.read().add_data_point(metric_id, &data_value()) {
                 Ok(_) => {
                     data_value.set(String::new());
                     success_message.set(Some(localization.data_added_success().to_string()));
@@ -66,13 +68,13 @@ pub fn AddDataTab(
     let add_data = move |_| add_data_action();
 
     let mut delete_point_action = move |point_id: i64| {
-        if app::delete_data_point(point_id).is_ok() {
+        if srv.read().delete_data_point(point_id).is_ok() {
             if let Some(metric_id) = selected_metric() {
-                if let Ok(count) = app::get_data_points_count(metric_id) {
+                if let Ok(count) = srv.read().get_data_points_count(metric_id) {
                     total_count.set(count);
                 }
 
-                if let Ok(points) = app::get_data_points_paginated(metric_id, PAGE_SIZE, offset(current_page(), PAGE_SIZE)) {
+                if let Ok(points) = srv.read().get_data_points_paginated(metric_id, PAGE_SIZE, offset(current_page(), PAGE_SIZE)) {
                     recent_points.set(points);
                 }
 
@@ -80,7 +82,7 @@ pub fn AddDataTab(
                     let new_page = current_page() - 1;
                     current_page.set(new_page);
 
-                    if let Ok(points) = app::get_data_points_paginated(metric_id, PAGE_SIZE, offset(new_page, PAGE_SIZE)) {
+                    if let Ok(points) = srv.read().get_data_points_paginated(metric_id, PAGE_SIZE, offset(new_page, PAGE_SIZE)) {
                         recent_points.set(points);
                     }
                 }
@@ -171,7 +173,8 @@ pub fn AddDataTab(
                             on_page_change: move |new_page: usize| {
                                 if let Some(metric_id) = selected_metric() {
                                     let offset = (new_page - 1) * PAGE_SIZE;
-                                    if let Ok(points) = app::get_data_points_paginated(metric_id, PAGE_SIZE, offset) {
+
+                                    if let Ok(points) = srv.read().get_data_points_paginated(metric_id, PAGE_SIZE, offset) {
                                         recent_points.set(points);
                                     }
                                 }
