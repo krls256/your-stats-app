@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use crate::domain::{correlation::Correlation, MetricType};
+use crate::domain::{correlation::{Correlation, CorrelationType}, MetricType};
 use crate::application as app;
 use crate::localization::{Language, get_localization};
 
@@ -80,9 +80,11 @@ pub fn CorrelationLine(
                                 span { class: "text-2xl font-bold text-gray-900", "{corr.correlation:.3}" }
                                 span { class: "text-sm text-gray-600",
                                     {
-                                        if corr.correlation.abs() > 0.7 { localization.strong_correlation() }
-                                        else if corr.correlation.abs() > 0.4 { localization.medium_correlation() }
-                                        else { localization.weak_correlation() }
+                                        match corr.correlation_type() {
+                                            CorrelationType::Strong => localization.strong_correlation(),
+                                            CorrelationType::Medium => localization.medium_correlation(),
+                                            CorrelationType::Weak => localization.weak_correlation() ,
+                                        }
                                     }
                                 }
                             }

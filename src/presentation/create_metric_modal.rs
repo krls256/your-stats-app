@@ -11,17 +11,17 @@ pub fn CreateMetricModal(
 ) -> Element {
     let localization = get_localization(language);
     
-    let mut metric_name = use_signal(|| String::new());
+    let mut metric_name = use_signal(String::new);
     let mut metric_type = use_signal(|| String::from(MetricType::default().as_str()));
-    let mut metric_description = use_signal(|| String::new());
+    let mut metric_description = use_signal(String::new);
 
     let mut create_metric_action = move || {
-        let mtype =  MetricType::from_str(metric_type().as_str()).unwrap_or(MetricType::default());
+        let mtype =  MetricType::from_str(metric_type().as_str()).unwrap_or_default();
         
         let desc = metric_description();
         let desc = if desc.is_empty() { None } else { Some(desc.as_str()) };
         
-        if let Ok(_) = app::create_metric(&metric_name(), mtype, desc) {
+        if app::create_metric(&metric_name(), mtype, desc).is_ok() {
             metric_name.set(String::new());
             metric_description.set(String::new());
             

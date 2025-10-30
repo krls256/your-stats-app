@@ -2,13 +2,14 @@ pub mod metric;
 pub mod data_point;
 pub mod correlation;
 
-use chrono::{DateTime, Utc, ParseError};
-use strum_macros::{EnumIter, FromRepr, EnumCount};
-use strum::{IntoEnumIterator, EnumCount};
+use chrono::{DateTime, Utc};
+use strum_macros::{EnumIter, FromRepr};
+use strum::{IntoEnumIterator};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, EnumIter, FromRepr, EnumCount)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, EnumIter, FromRepr)]
 pub enum MetricType {
     Integer,
+    #[default]
     Float,
     Boolean,
 }
@@ -36,11 +37,6 @@ impl MetricType {
     }
 }
 
-impl Default for MetricType {
-    fn default() -> Self {
-        MetricType::Float
-    }
-}
 pub fn readable_datetime(t: DateTime<Utc>) -> String {
     t.format("%a, %d %b %Y %H:%M:%S").to_string()
 }

@@ -1,6 +1,5 @@
 use anyhow::{anyhow, Result};
-use crate::domain::data_point::DataPoint;
-use crate::domain::metric::{Metric, MetricWithDataPoints};
+use crate::domain::metric::{MetricWithDataPoints};
 use crate::domain::MetricType;
 
 #[derive(Debug, Clone, PartialEq)]

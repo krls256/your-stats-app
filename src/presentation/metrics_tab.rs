@@ -12,7 +12,7 @@ pub fn MetricsTab(
 
     let mut show_form = use_signal(|| false);
     let mut metric_to_delete = use_signal(|| None::<i64>);
-    let mut refresh_trigger = use_signal(|| ());
+    let refresh_trigger = use_signal(|| ());
 
     use_effect(move || {
         refresh_trigger();
@@ -20,7 +20,7 @@ pub fn MetricsTab(
     });
 
     let mut delete_metric_action = move |metric_id: i64| {
-        if let Ok(_) = app::delete_metric(metric_id) {
+        if app::delete_metric(metric_id).is_ok() {
             metric_to_delete.set(None);
 
             if let Ok(m) = app::list_metrics() { metrics.set(m); }

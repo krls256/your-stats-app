@@ -4,9 +4,8 @@ mod application;
 mod presentation;
 mod localization;
 
-use domain::{correlation::Correlation, data_point::DataPointDTO, metric::Metric, MetricType};
+use domain::{correlation::Correlation, metric::Metric};
 use dioxus::prelude::*;
-use std::sync::{Arc, Mutex};
 
 fn main() {
     application::init_db("metrics.db");
@@ -15,11 +14,11 @@ fn main() {
 
 #[component]
 fn app() -> Element {
-    let mut metrics = use_signal(|| Vec::<Metric>::new());
-    let mut correlations = use_signal(|| Vec::<Correlation>::new());
-    let mut selected_metric = use_signal(|| None::<i64>);
-    let mut error_message = use_signal(|| None::<String>);
-    let mut active_tab = use_signal(|| presentation::navigation::Tab::Metrics);
+    let mut metrics = use_signal(Vec::<Metric>::new);
+    let correlations = use_signal(Vec::<Correlation>::new);
+    let selected_metric = use_signal(|| None::<i64>);
+    let error_message = use_signal(|| None::<String>);
+    let active_tab = use_signal(|| presentation::navigation::Tab::Metrics);
     let mut language = use_signal(|| localization::Language::Ua);
 
     use_effect(move || {
@@ -67,8 +66,8 @@ fn app() -> Element {
                     }
                 }
 
-                if let Some(err) = error_message() { 
-                    div { class: "bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6", "{err}" } 
+                if let Some(err) = error_message() {
+                    div { class: "bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6", "{err}" }
                 }
 
                 match active_tab() {

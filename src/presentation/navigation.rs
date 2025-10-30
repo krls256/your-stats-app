@@ -8,14 +8,6 @@ pub enum Tab {
 }
 
 impl Tab {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Tab::Metrics => "metrics",
-            Tab::AddData => "add-data",
-            Tab::Correlations => "correlations",
-        }
-    }
-
     pub fn label(&self, localization: &'static (dyn crate::localization::LocalizationTrait + Send + Sync)) -> &'static str {
         match self {
             Tab::Metrics => localization.tab_metrics(),

@@ -26,7 +26,6 @@ pub trait LocalizationTrait: Send + Sync {
     fn metric(&self) -> &'static str;
     fn select_metric(&self) -> &'static str;
     fn value(&self) -> &'static str;
-    fn add(&self) -> &'static str;
     fn add_with_enter(&self) -> &'static str;
     fn data_added_success(&self) -> &'static str;
     fn data_add_error(&self) -> &'static str;

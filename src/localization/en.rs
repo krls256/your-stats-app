@@ -87,10 +87,6 @@ impl LocalizationTrait for EnLocalization {
         "Value"
     }
 
-    fn add(&self) -> &'static str {
-        "Add"
-    }
-
     fn add_with_enter(&self) -> &'static str {
         "Add (⏎)"
     }

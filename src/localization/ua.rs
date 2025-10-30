@@ -87,10 +87,6 @@ impl LocalizationTrait for UaLocalization {
         "Значення"
     }
 
-    fn add(&self) -> &'static str {
-        "Додати"
-    }
-
     fn add_with_enter(&self) -> &'static str {
         "Додати (⏎)"
     }

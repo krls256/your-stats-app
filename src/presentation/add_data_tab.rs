@@ -10,10 +10,10 @@ pub fn AddDataTab(
     mut error_message: Signal<Option<String>>,
     language: Language,
 ) -> Element {
-    let localization = crate::localization::get_localization(language);
-    let mut data_value = use_signal(|| String::new());
+    let localization = get_localization(language);
+    let mut data_value = use_signal(String::new);
     let mut success_message = use_signal(|| None::<String>);
-    let mut recent_points = use_signal(|| Vec::<DataPoint>::new());
+    let mut recent_points = use_signal(Vec::<DataPoint>::new);
     let mut current_page = use_signal(|| 1);
     let mut total_count = use_signal(|| 0);
 
@@ -66,7 +66,7 @@ pub fn AddDataTab(
     let add_data = move |_| add_data_action();
 
     let mut delete_point_action = move |point_id: i64| {
-        if let Ok(_) = app::delete_data_point(point_id) {
+        if app::delete_data_point(point_id).is_ok() {
             if let Some(metric_id) = selected_metric() {
                 if let Ok(count) = app::get_data_points_count(metric_id) {
                     total_count.set(count);

@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{Result};
 use chrono::{DateTime, Utc};
 use rusqlite::{params, Connection, Row};
 use rusqlite::types::Type;
@@ -61,7 +61,7 @@ impl Repository {
             "SELECT id, name, metric_type, description, created_at FROM metrics ORDER BY created_at DESC",
         )?;
 
-        let rows = stmt.query_map([], |row| Self::row_to_metric(row))?;
+        let rows = stmt.query_map([], Self::row_to_metric)?;
         let mut out = Vec::new();
         for r in rows {
             out.push(r?.try_into()?);
@@ -80,18 +80,6 @@ impl Repository {
         Ok(self.conn.last_insert_rowid())
     }
 
-    pub fn get_data_points(&self, metric_id: i64, limit: usize) -> Result<Vec<DataPoint>> {
-        let mut out = Vec::new();
-        let mut stmt = self.conn.prepare(
-            "SELECT id, metric_id, value, timestamp FROM data_points WHERE metric_id = ?1 ORDER BY id DESC LIMIT ?2",
-        )?;
-
-        let rows = stmt.query_map(params![metric_id, limit as i64], |row| Self::row_to_datapoint(row))?;
-        for r in rows { out.push(r?.try_into()?) }
-
-        Ok(out)
-    }
-
     pub fn get_all_data_points(&self) -> Result<Vec<DataPoint>> {
         let mut out = Vec::new();
 
@@ -99,7 +87,7 @@ impl Repository {
             "SELECT id, metric_id, value, timestamp FROM data_points ORDER BY id DESC",
         )?;
 
-        let rows = stmt.query_map(params![], |row| Self::row_to_datapoint(row))?;
+        let rows = stmt.query_map(params![], Self::row_to_datapoint)?;
         for r in rows { out.push(r?.try_into()?) }
 
         Ok(out)
@@ -111,7 +99,7 @@ impl Repository {
             "SELECT id, metric_id, value, timestamp FROM data_points WHERE metric_id = ?1 ORDER BY id DESC LIMIT ?2 OFFSET ?3",
         )?;
 
-        let rows = stmt.query_map(params![metric_id, limit as i64, offset as i64], |row| Self::row_to_datapoint(row))?;
+        let rows = stmt.query_map(params![metric_id, limit as i64, offset as i64], Self::row_to_datapoint)?;
         for r in rows { out.push(r?.try_into()?) }
 
         Ok(out)

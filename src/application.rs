@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex, OnceLock};
 
 use crate::repository::Repository;
-use crate::domain::{correlation::Correlation, data_point::{DataPointDTO, DataPoint}, metric::{Metric}, MetricType};
+use crate::domain::{correlation::Correlation, data_point::{DataPoint}, metric::{Metric}, MetricType};
 use crate::domain::metric::MetricWithDataPoints;
 
 static REPO: OnceLock<Arc<Mutex<Repository>>> = OnceLock::new();
@@ -28,11 +28,6 @@ pub fn list_metrics() -> anyhow::Result<Vec<Metric>> {
 pub fn add_data_point(metric_id: i64, value: &str) -> anyhow::Result<i64> {
     let lock = db().lock().unwrap();
     lock.add_data_point(metric_id, value)
-}
-
-pub fn get_recent_points(metric_id: i64, limit: usize) -> anyhow::Result<Vec<DataPoint>> {
-    let lock = db().lock().unwrap();
-    lock.get_data_points(metric_id, limit)
 }
 
 pub fn get_data_points_paginated(metric_id: i64, limit: usize, offset: usize) -> anyhow::Result<Vec<DataPoint>> {
@@ -72,5 +67,5 @@ pub fn calculate_correlations() -> anyhow::Result<Vec<Correlation>> {
         }
     }
 
-    return Ok(correlations)
+    Ok(correlations)
 }
