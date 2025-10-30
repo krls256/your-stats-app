@@ -1,0 +1,31 @@
+[package]
+name = "your-stats-app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dioxus = { version = "0.6", features = ["desktop"] }
+rusqlite = "0.37"
+chrono = "0.4"
+anyhow = "1"
+strum = "0.27.2"
+strum_macros = "0.27.2"
+clap = { version = "4.5.51", features = ["derive"] }
+wasm-bindgen = "0.2.105"
+web-sys = "0.3.82"
+
+[[bin]]
+name = "your-stats-app"
+path = "src/main.rs"
+
+[profile]
+
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+
+[profile.server-dev]
+inherits = "dev"
+
+[profile.android-dev]
+inherits = "dev"
